@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: swingexploder-backend
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SUPABASE_URL
+        value: https://vobzbxubffeovpnfywbq.supabase.co
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: TARGET_USER_ID
+        value: max-trader-master
