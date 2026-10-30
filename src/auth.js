@@ -3,8 +3,8 @@ import { getSupabase, isSupabaseConfigured, dbFetchUserProfile, dbUpsertProfile 
 
 export const DEFAULT_MAX_USER = {
   id: "max-trader-master",
-  name: "Master Algo Trader",
-  email: "trader@swingexploder.pro",
+  name: "Mohit Singha",
+  email: "mohitsingha271l@gmail.com",
   role: "Fund Manager / Prop Algo Trader",
   plan: "Max Plan (Lifetime Elite Access)",
   planExpiry: "2035-12-31",
@@ -15,7 +15,7 @@ export const DEFAULT_MAX_USER = {
   availableMargin: 1000000.00,
   broker: {
     name: "Lemonn Broker Bridge",
-    clientCode: "LEM-MAX-ALGO-01",
+    clientCode: "LEM-MOHIT-MAX",
     status: "Connected (Live Algo Stream)",
     pingMs: 14,
     accountBalance: "₹10,00,000.00",
