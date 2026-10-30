@@ -1,0 +1,88 @@
+name: SwingExploder CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  # ========================================================
+  # 1. VALIDATION & BUILD CHECK
+  # ========================================================
+  validate:
+    name: Build & Code Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Frontend Dependencies
+        run: npm install
+
+      - name: Test Frontend Production Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder' }}
+          VITE_RAILWAY_API_URL: ${{ secrets.VITE_RAILWAY_API_URL || 'https://placeholder.railway.app' }}
+
+      - name: Install & Syntax Check Backend Server
+        run: |
+          cd server
+          npm install
+          node --check server.js
+          node --check engine.js
+
+  # ========================================================
+  # 2. DEPLOY FRONTEND TO VERCEL
+  # ========================================================
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
+    needs: validate
+    runs-on: ubuntu-latest
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel Production
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./
+
+  # ========================================================
+  # 3. DEPLOY BACKEND WORKER TO RAILWAY
+  # ========================================================
+  deploy-backend:
+    name: Deploy Backend to Railway
+    needs: validate
+    runs-on: ubuntu-latest
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name != 'pull_request' && secrets.RAILWAY_TOKEN != ''
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        run: |
+          cd server
+          railway up --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

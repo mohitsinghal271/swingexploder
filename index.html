@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SwingExploder</title>
+  <meta name="description" content="SwingExploder is the ultimate automated algorithmic trading platform in India. Execute high-probability trading strategies like Dhurandhar, Momentum Master, and Brahmastra on complete autopilot." />
+  <meta name="author" content="SwingExploder" />
+  <meta name="keywords" content="swingexploder,swingautomation,swing automation,stockexploder,algorithmic trading,algo trading platform,automated options trading,algo trading India,momentum trading strategies,automated investing" />
+  <meta name="theme-color" content="#09090B" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="theme-dark">
+
+  <!-- Interactive Background Canvas (Exact Candlestick + Moving Averages) -->
+  <canvas id="trading-bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- Global Market Ticker Bar -->
+  <header class="ticker-bar" id="market-ticker-bar">
+    <div class="ticker-wrap" id="ticker-container">
+      <!-- Injected dynamically via JS -->
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- 1. PUBLIC MARKETING & LANDING VIEW                      -->
+  <!-- ======================================================== -->
+  <div id="landing-view" class="view-active">
+    
+    <!-- Navbar (1:1 with swingexploder.com) -->
+    <header class="navbar" role="banner">
+      <div class="navbar-inner">
+        <a class="flex items-center brand-logo" aria-label="SwingExploder Home" href="#landing-view">
+          <div class="brand-icon">⚡</div>
+          <div class="brand-text">
+            <span class="brand-name">Swing<span class="brand-accent">Exploder</span></span>
+          </div>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Main navigation">
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#testimonials" class="nav-link">Testimonials</a>
+          <a href="#pricing" class="nav-link">Pricing</a>
+          <a href="#contact" class="nav-link">Contact</a>
+          <button class="nav-link btn-support" id="nav-support-btn">Support</button>
+        </nav>
+
+        <div class="nav-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-open-login">Sign In</button>
+          <button class="btn btn-primary btn-sm btn-glow" id="btn-quick-demo">
+            <span>Launch App</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Hero Section -->
+      <section class="hero-section" aria-label="Hero section">
+        <div class="container hero-container">
+          <div class="hero-content">
+            <h1 class="hero-headline">
+              <span class="hero-headline-line">BUILT FOR THE</span><br />
+              <span class="hero-headline-gradient gradient-text">TOP 1% OF TRADERS</span>
+            </h1>
+            <p class="hero-subheadline">
+              LAUNCH YOUR SUCCESS WITH OUR STRATEGIES Automate our strategies with your capital and let algo make you money.
+            </p>
+
+            <div class="hero-ctas">
+              <button class="btn btn-primary btn-lg btn-glow" id="hero-get-started-btn">
+                <span>Get Started</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+              </button>
+              <button class="btn btn-secondary btn-lg" id="hero-demo-login-btn">
+                <span>Explore Live Strategies</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Hero Dashboard Preview (1:1 with swingexploder.com) -->
+          <div class="hero-preview-wrapper" aria-hidden="true">
+            <div class="preview-card glass-card">
+              <div class="preview-header">
+                <div class="preview-dots">
+                  <div class="dot red" style="background:#FF5F57;"></div>
+                  <div class="dot yellow" style="background:#FEBC2E;"></div>
+                  <div class="dot green" style="background:#28C840;"></div>
+                </div>
+                <span class="preview-title">Portfolio Overview</span>
+                <span class="preview-live-badge"><span class="live-pulse"></span>Live</span>
+              </div>
+
+              <div class="preview-balance">
+                <div class="balance-meta">
+                  <span class="bal-label">Total Value</span>
+                </div>
+                <div class="bal-value font-mono">₹24,87,320</div>
+                <div class="bal-change up font-mono">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+                  +₹1,24,560 today (+5.27%)
+                </div>
+              </div>
+
+              <div class="preview-chart">
+                <svg viewBox="0 0 200 60" class="mini-chart-svg">
+                  <defs>
+                    <linearGradient id="miniChartGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(16,185,129,0.3)"></stop>
+                      <stop offset="100%" stop-color="rgba(16,185,129,0)"></stop>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,50 C20,45 30,35 50,30 C70,25 80,38 100,28 C120,18 130,10 150,8 C170,6 180,15 200,12 L200,60 L0,60 Z" fill="url(#miniChartGrad)"></path>
+                  <path d="M0,50 C20,45 30,35 50,30 C70,25 80,38 100,28 C120,18 130,10 150,8 C170,6 180,15 200,12" fill="none" stroke="#10b981" stroke-width="1.5"></path>
+                </svg>
+              </div>
+
+              <!-- Positions -->
+              <div class="preview-positions">
+                <div class="preview-pos-item">
+                  <div class="pos-left">
+                    <span class="pos-sym font-bold">DHURANDHAR</span>
+                    <span class="pos-qty text-muted">2 Lots</span>
+                  </div>
+                  <span class="pos-pnl font-mono text-profit">+79.78%</span>
+                </div>
+                <div class="preview-pos-item">
+                  <div class="pos-left">
+                    <span class="pos-sym font-bold">MOMENTUM MASTERS</span>
+                    <span class="pos-qty text-muted">1 Lot</span>
+                  </div>
+                  <span class="pos-pnl font-mono text-profit">+42.50%</span>
+                </div>
+                <div class="preview-pos-item">
+                  <div class="pos-left">
+                    <span class="pos-sym font-bold">BRAHMASTRA</span>
+                    <span class="pos-qty text-muted">1 Lot</span>
+                  </div>
+                  <span class="pos-pnl font-mono text-profit">+38.60%</span>
+                </div>
+              </div>
+
+              <!-- Active Strategies Pill Box -->
+              <div class="preview-strategies-box">
+                <div class="p-strat-head">
+                  <span>Active Strategies</span>
+                  <span class="badge-running">3 Running</span>
+                </div>
+                <div class="p-strat-item">
+                  <span class="dot-green"></span>
+                  <span class="p-strat-name">DHURANDHAR</span>
+                  <span class="p-strat-roi text-profit font-mono">+79.78%</span>
+                </div>
+                <div class="p-strat-item">
+                  <span class="dot-green"></span>
+                  <span class="p-strat-name">MOMENTUM MASTERS</span>
+                  <span class="p-strat-roi text-profit font-mono">+42.50%</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1-Year Verified PnL (1:1 with swingexploder.com) -->
+      <section class="verified-section">
+        <div class="container">
+          <div class="verified-banner-card glass-gold">
+            <div class="verified-info">
+              <span class="gold-sparkle">✦</span>
+              <div>
+                <h3 class="verified-title">1 Year Verified PnL</h3>
+                <p class="verified-sub">Verified returns generated by our algorithmic strategies over the last 1 year.</p>
+              </div>
+            </div>
+
+            <div class="verified-metrics">
+              <div class="v-metric">
+                <p class="v-label">CAPITAL</p>
+                <p class="v-val font-mono">₹27,00,000</p>
+              </div>
+              <div class="v-sep"></div>
+              <div class="v-metric">
+                <p class="v-label">PROFIT</p>
+                <p class="v-val font-mono text-profit">+₹9,72,000</p>
+              </div>
+              <div class="v-sep"></div>
+              <div class="v-metric">
+                <p class="v-label">RETURN</p>
+                <p class="v-val font-mono text-profit">36%</p>
+              </div>
+            </div>
+
+            <div class="verified-cta">
+              <a href="https://console.zerodha.com/verified/f6519883" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btn-zerodha-proof">
+                <span>Verified Link</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features Section (1:1 with swingexploder.com) -->
+      <section id="features" class="features-section" aria-label="Platform features">
+        <div class="container">
+          <div class="section-header text-center">
+            <span class="eyebrow">Everything you need</span>
+            <h2 class="section-title">The complete algorithmic<br /><span class="gradient-text">trading platform</span></h2>
+            <p class="section-desc">From strategy automation to advanced analytics to risk management — SwingExploder is the only platform serious traders need.</p>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-card glass-card">
+              <div class="f-icon">📊</div>
+              <h3>Trading Dashboard</h3>
+              <p>Comprehensive real-time dashboard with portfolio overview, P&amp;L tracking, and market analytics for complete trading control.</p>
+            </div>
+            <div class="feature-card glass-card">
+              <div class="f-icon">🤖</div>
+              <h3>AI Trading Bots</h3>
+              <p>Intelligent automated trading bots powered by machine learning algorithms for NSE and BSE markets.</p>
+            </div>
+            <div class="feature-card glass-card">
+              <div class="f-icon">🔍</div>
+              <h3>Stock Screener</h3>
+              <p>Advanced stock screening with 100+ technical and fundamental filters to identify profitable trading opportunities.</p>
+            </div>
+            <div class="feature-card glass-card">
+              <div class="f-icon">👥</div>
+              <h3>Trader Community</h3>
+              <p>Connect with like-minded traders, share strategies, and learn from experienced professionals in our exclusive community.</p>
+            </div>
+            <div class="feature-card glass-card">
+              <div class="f-icon">🔔</div>
+              <h3>Smart Alerts</h3>
+              <p>Customizable price alerts, technical indicator notifications, and trade signals delivered instantly via SMS and email.</p>
+            </div>
+            <div class="feature-card glass-card">
+              <div class="f-icon">📹</div>
+              <h3>Live Workshops</h3>
+              <p>Regular live training sessions and workshops by experienced traders to enhance your trading skills and strategies.</p>
+            </div>
+          </div>
+
+          <!-- Strategy Marketplace Showcase (#marketplace) -->
+          <div class="marketplace-showcase glass-card mt-5" id="marketplace">
+            <div class="market-left">
+              <div class="market-eyebrow">
+                <span>🛍️ Strategy Marketplace</span>
+              </div>
+              <h2 class="market-title">Discover strategies<br /><span class="gradient-text">built by pros.</span></h2>
+              <p class="market-desc">Browse proven strategies. Subscribe with one click.</p>
+              <button class="btn btn-primary btn-sm btn-glow mt-3" id="btn-browse-marketplace">Browse Strategies →</button>
+            </div>
+
+            <div class="market-right">
+              <div class="strategy-card glass-card">
+                <div class="s-header">
+                  <span class="s-name font-bold">DHURANDHAR</span>
+                  <span class="s-roi font-mono text-profit">+79.78%</span>
+                </div>
+                <div class="s-meta">
+                  <span class="text-loss font-mono">DD -12.4%</span>
+                </div>
+              </div>
+
+              <div class="strategy-card glass-card">
+                <div class="s-header">
+                  <span class="s-name font-bold">MOMENTUM MASTERS</span>
+                  <span class="s-roi font-mono text-profit">+42.50%</span>
+                </div>
+                <div class="s-meta">
+                  <span class="text-loss font-mono">DD -9.4%</span>
+                </div>
+              </div>
+
+              <div class="strategy-card glass-card">
+                <div class="s-header">
+                  <span class="s-name font-bold">BRAHMASTRA</span>
+                  <span class="s-roi font-mono text-profit">+38.60%</span>
+                </div>
+                <div class="s-meta">
+                  <span class="text-loss font-mono">DD -7.2%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Social Proof / Counters & Testimonials (#social-proof, #testimonials) -->
+      <section id="testimonials" class="testimonials-section" aria-label="Social proof">
+        <div class="container">
+          <!-- Counters Strip -->
+          <div class="counters-strip glass-card mb-5">
+            <div class="counter-item">
+              <span class="counter-val font-mono">₹42Cr+</span>
+              <span class="counter-lbl">Profits Generated</span>
+            </div>
+            <div class="counter-item">
+              <span class="counter-val font-mono">12,000+</span>
+              <span class="counter-lbl">Active Traders</span>
+            </div>
+            <div class="counter-item">
+              <span class="counter-val font-mono">74%</span>
+              <span class="counter-lbl">Success Rate</span>
+            </div>
+            <div class="counter-item">
+              <span class="counter-val font-mono text-profit">24/7</span>
+              <span class="counter-lbl">Support</span>
+            </div>
+          </div>
+
+          <div class="section-header text-center">
+            <span class="eyebrow">Trusted by traders</span>
+            <h2 class="section-title">Real traders. Real results.<br /><span class="gradient-text">Real money.</span></h2>
+          </div>
+
+          <!-- Testimonials Slider -->
+          <div class="testimonials-slider glass-card" id="testimonial-slider-container">
+            <div class="quote-icon">“</div>
+            <div class="testimonial-roi font-mono text-profit" id="testimonial-roi">+47%</div>
+            <blockquote class="testimonial-content" id="testimonial-text">
+              "SwingExploder transformed how I trade. My NIFTY momentum strategy now runs 24/7 without me watching screens. Up 47% in 3 months."
+            </blockquote>
+
+            <div class="testimonial-author">
+              <div class="author-avatar" id="author-avatar">AM</div>
+              <div class="author-info">
+                <div class="author-name" id="author-name">Arjun Mehta <span class="verified-badge">✓ Verified</span></div>
+                <div class="author-strat" id="author-strat">Strategy: <strong>DHURANDHAR</strong></div>
+              </div>
+              <div class="stars-row">★★★★★</div>
+            </div>
+
+            <!-- 5 Testimonial Buttons matching official site -->
+            <div class="testimonial-buttons-row">
+              <button class="t-person-btn active" data-idx="0">
+                <span class="t-badge-sm">AM</span>
+                <div><strong>Arjun Mehta</strong><span class="text-profit"> +47%</span></div>
+              </button>
+              <button class="t-person-btn" data-idx="1">
+                <span class="t-badge-sm">PS</span>
+                <div><strong>Priya Sharma</strong><span class="text-profit"> +31%</span></div>
+              </button>
+              <button class="t-person-btn" data-idx="2">
+                <span class="t-badge-sm">RV</span>
+                <div><strong>Rahul Verma</strong><span class="text-profit"> +34%</span></div>
+              </button>
+              <button class="t-person-btn" data-idx="3">
+                <span class="t-badge-sm">SG</span>
+                <div><strong>Dr. Sanjay Gupta</strong><span class="text-profit"> +22%</span></div>
+              </button>
+              <button class="t-person-btn" data-idx="4">
+                <span class="t-badge-sm">VS</span>
+                <div><strong>Vikram Singh</strong><span class="text-profit"> +38%</span></div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing Plans (1:1 with swingexploder.com) -->
+      <section id="pricing" class="pricing-section" aria-label="Pricing plans">
+        <div class="container">
+          <div class="section-header text-center">
+            <span class="eyebrow">Simple pricing</span>
+            <h2 class="section-title">Choose your plan.<br /><span class="gradient-text">Scale with confidence.</span></h2>
+            <p class="section-desc">Unlock premium algorithmic trading tools today.</p>
+          </div>
+
+          <div class="pricing-grid">
+            <!-- Basic Plan -->
+            <div class="pricing-card glass-card">
+              <div class="p-header">
+                <h3 class="text-profit font-bold">Basic</h3>
+                <p>Perfect for retail algo traders getting started</p>
+              </div>
+              <div class="p-price">
+                <div class="old-price">₹2,000</div>
+                <div class="price-val font-mono"><span class="cur">₹</span>1,000<span class="period">/mo</span></div>
+                <div class="save-tag">Save ₹1,000</div>
+              </div>
+              <button class="btn btn-secondary btn-block mb-3 btn-subscribe-plan" data-plan="Basic">Subscribe Now →</button>
+              <div class="p-divider"></div>
+              <ul class="p-features">
+                <li><span class="check-icon">✓</span> VCP setup Video</li>
+                <li><span class="check-icon">✓</span> R.B setup Video</li>
+                <li><span class="check-icon">✓</span> IPO basic setup video</li>
+                <li><span class="check-icon">✓</span> Algo Screener</li>
+              </ul>
+              <div class="p-divider"></div>
+              <div class="p-free-box">
+                <h4 class="free-title text-profit">FREE</h4>
+                <ul class="p-features">
+                  <li><span class="check-icon text-profit">✓</span> Detailed Stock Analysis</li>
+                  <li><span class="check-icon text-profit">✓</span> Premium Telegram Group</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Pro Plan (Most Popular) -->
+            <div class="pricing-card glass-card featured-plan">
+              <div class="popular-ribbon">Most Popular</div>
+              <div class="p-header">
+                <h3 class="text-brand font-bold">Pro</h3>
+                <p>Perfect for retail algo traders getting started</p>
+              </div>
+              <div class="p-price">
+                <div class="old-price">₹5,000</div>
+                <div class="price-val font-mono"><span class="cur">₹</span>3,000<span class="period">/mo</span></div>
+                <div class="save-tag">Save ₹2,000</div>
+              </div>
+              <button class="btn btn-primary btn-block btn-glow mb-3 btn-subscribe-plan" data-plan="Pro">Subscribe Now →</button>
+              <div class="p-divider"></div>
+              <ul class="p-features">
+                <li><span class="check-icon">✓</span> VCP setup Video</li>
+                <li><span class="check-icon">✓</span> R.B setup Video</li>
+                <li><span class="check-icon">✓</span> IPO basic setup video</li>
+                <li><span class="check-icon">✓</span> Algo Screener</li>
+                <li><span class="check-icon">✓</span> Telegram community group</li>
+              </ul>
+              <div class="p-divider"></div>
+              <div class="p-free-box">
+                <h4 class="free-title text-profit">FREE</h4>
+                <ul class="p-features">
+                  <li><span class="check-icon text-profit">✓</span> <strong>EQ Algo : Momentum Master</strong></li>
+                  <li><span class="check-icon text-profit">✓</span> <strong class="text-loss">Broker Req - Lemonn (Mandatory)</strong></li>
+                  <li><span class="check-icon text-profit">✓</span> <strong class="text-brand">Min. Capital Required: ₹200,000 (2L)</strong></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Elite Plan -->
+            <div class="pricing-card glass-card">
+              <div class="p-header">
+                <h3 class="text-profit font-bold">Elite</h3>
+                <p>Advanced algo automation for professional desks</p>
+              </div>
+              <div class="p-price">
+                <div class="old-price">₹10,000</div>
+                <div class="price-val font-mono"><span class="cur">₹</span>5,000<span class="period">/mo</span></div>
+                <div class="save-tag">Save ₹5,000</div>
+              </div>
+              <button class="btn btn-secondary btn-block mb-3 btn-subscribe-plan" data-plan="Elite">Subscribe Now →</button>
+              <div class="p-divider"></div>
+              <ul class="p-features">
+                <li><span class="check-icon">✓</span> VCP setup Video</li>
+                <li><span class="check-icon">✓</span> R.B setup Video</li>
+                <li><span class="check-icon">✓</span> IPO basic setup video</li>
+                <li><span class="check-icon">✓</span> Algo Screener</li>
+                <li><span class="check-icon">✓</span> Telegram community group</li>
+              </ul>
+              <div class="p-divider"></div>
+              <div class="p-free-box">
+                <h4 class="free-title text-profit">FREE</h4>
+                <ul class="p-features">
+                  <li><span class="check-icon text-profit">✓</span> <strong>FNO Algo : Dhurandhar &amp; Brahmastra</strong></li>
+                  <li><span class="check-icon text-profit">✓</span> <strong>FNO algo automation</strong></li>
+                  <li><span class="check-icon text-profit">✓</span> <strong>EQ Algo : Momentum Master</strong></li>
+                  <li><span class="check-icon text-profit">✓</span> <strong class="text-loss">Broker Req - Lemonn (Mandatory)</strong></li>
+                  <li><span class="check-icon text-profit">✓</span> <strong class="text-brand">Min. Capital Required: ₹500,000 (5L)</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section (#contact) -->
+      <section id="contact" class="contact-section">
+        <div class="container max-w-lg">
+          <div class="text-center mb-4">
+            <h2 class="text-3xl font-bold mb-2">Contact Us</h2>
+            <p class="text-muted">Get in touch with our team</p>
+          </div>
+
+          <div class="glass-card contact-form">
+            <form id="contact-us-form">
+              <input type="text" style="display:none" tabindex="-1" autocomplete="off" name="botTrap" value="" />
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contact-name">Name *</label>
+                  <input type="text" id="contact-name" name="name" required placeholder="Your name" />
+                </div>
+                <div class="form-group">
+                  <label for="contact-email">Email *</label>
+                  <input type="email" id="contact-email" name="email" required placeholder="your@email.com" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="contact-phone">Phone</label>
+                <input type="tel" id="contact-phone" name="phone" placeholder="Your phone number" />
+              </div>
+              <div class="form-group">
+                <label for="contact-message">Message *</label>
+                <textarea id="contact-message" name="message" required rows="4" placeholder="Your message..."></textarea>
+              </div>
+              <div class="text-center pt-2">
+                <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer (1:1 with swingexploder.com) -->
+    <footer class="footer" aria-label="Site footer">
+      <!-- CTA Banner -->
+      <div class="cta-banner" id="footer-cta-banner">
+        <div class="container cta-banner-inner">
+          <div class="cta-banner-content">
+            <h2 class="cta-banner-title">Ready to trade like an institution?</h2>
+            <p class="cta-banner-desc">Get access to the premium algorithmic trading platform for Indian markets.</p>
+          </div>
+          <div class="cta-banner-actions">
+            <button class="btn btn-primary btn-lg btn-glow" id="footer-get-started-btn">Get Started →</button>
+            <button class="btn-link" id="footer-signin-btn" style="color:var(--text-secondary);text-decoration:none;">Already have an account? Sign In →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-main">
+        <div class="container footer-grid">
+          <div class="brand-column">
+            <a class="brand-logo mb-3" href="#landing-view">
+              <span class="brand-icon">⚡</span>
+              <span class="brand-name">Swing<span class="brand-accent">Exploder</span></span>
+            </a>
+            <p class="tagline text-muted">Institutional-grade algorithmic trading built for the Indian stock market.</p>
+            <div class="social-links mt-3">
+              <a href="https://www.instagram.com/stockexploder/profilecard/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                📸 Instagram: @stockexploder
+              </a>
+            </div>
+            <!-- Newsletter -->
+            <div class="newsletter mt-4">
+              <p class="newsletter-label text-sm font-bold">Get trading insights weekly</p>
+              <form class="newsletter-form mt-2" id="newsletter-form">
+                <input type="text" style="display:none" tabindex="-1" autocomplete="off" name="botTrap" value="" />
+                <input type="email" placeholder="your@email.com" class="newsletter-input" required aria-label="Email for newsletter" />
+                <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="link-column">
+            <h4>Product</h4>
+            <ul class="link-list">
+              <li><a href="#features">Features</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+              <li><a href="#testimonials">Testimonials</a></li>
+              <li><a href="#contact">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <div class="link-column">
+            <h4>Legal</h4>
+            <ul class="link-list">
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms &amp; Conditions</a></li>
+              <li><a href="#">Disclaimer</a></li>
+              <li><a href="#">Refund Policy</a></li>
+            </ul>
+          </div>
+
+          <div class="link-column">
+            <h4>Contact</h4>
+            <ul class="link-list">
+              <li class="text-xs text-muted">Email: support@swingexploder.com</li>
+              <li class="text-xs text-muted">Phone: <a href="https://wa.me/918962774024?text=Hello! I would like to know more about SwingExploder." target="_blank" class="wa-link">+91 89627 74024 (WhatsApp Only)</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="container bottom-bar">
+          <p class="copyright text-xs text-muted">© 2026 SwingExploder Technologies Pvt. Ltd. All rights reserved.</p>
+          <div class="bottom-links text-xs">
+            <span class="text-muted">SwingExploder is not a SEBI registered advisor.</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 2. AUTHENTICATED SAAS PORTAL VIEW                       -->
+  <!-- ======================================================== -->
+  <div id="app-view" class="view-hidden">
+    <div class="app-layout">
+      <!-- Sidebar with 16 modules -->
+      <aside class="app-sidebar" id="app-sidebar">
+        <div class="sidebar-header">
+          <a href="#" class="brand-logo" id="sidebar-brand-home">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-name">Swing<span class="brand-accent">Exploder</span></span>
+          </a>
+        </div>
+
+        <div class="sidebar-user-pill">
+          <div class="user-avatar" id="app-user-avatar">AM</div>
+          <div class="user-meta">
+            <span class="u-name" id="app-user-name">Arjun Mehta</span>
+            <span class="u-tier text-brand" id="app-user-tier">Elite Trader</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-menu">
+          <button class="menu-item active" data-app-view="home">
+            <span class="m-icon">🏠</span>
+            <span class="m-text">Home Dashboard</span>
+          </button>
+          <button class="menu-item" data-app-view="dashboard">
+            <span class="m-icon">📊</span>
+            <span class="m-text">Portfolio &amp; PnL</span>
+          </button>
+          <button class="menu-item" data-app-view="strategies">
+            <span class="m-icon">⚡</span>
+            <span class="m-text">Algo Strategies</span>
+          </button>
+          <button class="menu-item" data-app-view="broker">
+            <span class="m-icon">💼</span>
+            <span class="m-text">Broker Integration</span>
+            <span class="pill-dot green"></span>
+          </button>
+          <button class="menu-item" data-app-view="watchlist">
+            <span class="m-icon">👁️</span>
+            <span class="m-text">My Watchlist</span>
+          </button>
+          <button class="menu-item" data-app-view="screener">
+            <span class="m-icon">🔍</span>
+            <span class="m-text">Stock Screener</span>
+          </button>
+          <button class="menu-item" data-app-view="sector">
+            <span class="m-icon">🔄</span>
+            <span class="m-text">Sector Rotation</span>
+          </button>
+          <button class="menu-item" data-app-view="fundamental">
+            <span class="m-icon">📈</span>
+            <span class="m-text">FII / DII &amp; Financials</span>
+          </button>
+          <button class="menu-item" data-app-view="filings">
+            <span class="m-icon">📑</span>
+            <span class="m-text">Filings &amp; Sentiment</span>
+          </button>
+          <button class="menu-item" data-app-view="aibot">
+            <span class="m-icon">🤖</span>
+            <span class="m-text">AI Trading Bot</span>
+            <span class="badge-new">AI</span>
+          </button>
+          <button class="menu-item" data-app-view="reports">
+            <span class="m-icon">📊</span>
+            <span class="m-text">Reports &amp; Analysis</span>
+            <span class="badge-new" style="background:var(--profit-bg);color:var(--profit-light);font-size:10px;">PRO</span>
+          </button>
+          <button class="menu-item" data-app-view="telegram">
+            <span class="m-icon">💬</span>
+            <span class="m-text">Telegram Alerts</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button class="btn btn-outline btn-sm btn-block" id="btn-back-to-landing">
+            <span>← Public Site</span>
+          </button>
+          <button class="btn btn-secondary btn-sm btn-block" id="btn-app-logout">
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Portal Content Area -->
+      <main class="app-main-content">
+        <!-- Topbar -->
+        <header class="app-topbar">
+          <div class="topbar-left">
+            <button class="sidebar-toggle" id="btn-toggle-sidebar">☰</button>
+            <div class="market-clock">
+              <span class="clock-dot"></span>
+              <span id="market-status-text">NSE: OPEN 🟢</span>
+              <span class="clock-sep">|</span>
+              <span class="font-mono" id="market-clock-time">09:15:00 IST</span>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <div class="broker-status-pill" id="header-broker-pill">
+              <span class="pill-dot green"></span>
+              <span>Lemonn: <strong>LEM-MAX-ALGO</strong> (14ms)</span>
+            </div>
+            <button class="btn btn-xs btn-primary btn-glow" id="btn-open-paper-settings">💰 Paper Capital (+Add)</button>
+            <button class="btn btn-xs btn-outline" id="btn-open-supabase-modal">🗄️ Supabase DB</button>
+            <button class="btn btn-xs btn-primary" id="btn-quick-trade-sim">+ Place Order</button>
+            <button class="btn btn-xs btn-outline" id="btn-portal-logout">Logout</button>
+          </div>
+        </header>
+
+        <!-- Dynamic Portal Views Container -->
+        <div class="portal-body" id="portal-views-container">
+          <!-- Injected via main.js -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 3. REAL AUTHENTICATION MODAL                             -->
+  <!-- ======================================================== -->
+  <div class="modal-backdrop" id="login-modal" aria-hidden="true">
+    <div class="modal-card glass-card" style="max-width:440px;">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      
+      <div class="modal-header text-center">
+        <div class="modal-icon">🔐</div>
+        <h2>SwingExploder Terminal</h2>
+        <p>Access your Max Plan algorithmic portfolio &amp; live screeners</p>
+      </div>
+
+      <div class="auth-tabs" style="display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid var(--border-subtle);padding-bottom:10px;">
+        <button class="btn btn-xs btn-primary auth-tab-btn active" data-tab="signin">Sign In</button>
+        <button class="btn btn-xs btn-outline auth-tab-btn" data-tab="signup">Create Account</button>
+        <button class="btn btn-xs btn-outline auth-tab-btn" data-tab="mobile">Mobile OTP</button>
+      </div>
+
+      <!-- Sign In Tab -->
+      <div id="auth-panel-signin" class="auth-panel active">
+        <div class="form-group mb-3">
+          <label>Email Address</label>
+          <input type="email" id="signin-email" placeholder="name@example.com" value="trader@swingexploder.pro" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;" />
+        </div>
+        <div class="form-group mb-3">
+          <label>Password</label>
+          <input type="password" id="signin-password" placeholder="••••••••" value="MasterPass2026!" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;" />
+        </div>
+        <button class="btn btn-primary btn-block btn-glow mb-2" id="btn-submit-signin">Sign In to Max Plan</button>
+      </div>
+
+      <!-- Sign Up Tab -->
+      <div id="auth-panel-signup" class="auth-panel" style="display:none;">
+        <div class="form-group mb-3">
+          <label>Full Name</label>
+          <input type="text" id="signup-name" placeholder="Arjun Mehta" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;" />
+        </div>
+        <div class="form-group mb-3">
+          <label>Email Address</label>
+          <input type="email" id="signup-email" placeholder="name@example.com" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;" />
+        </div>
+        <div class="form-group mb-3">
+          <label>Password</label>
+          <input type="password" id="signup-password" placeholder="Create strong password" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;" />
+        </div>
+        <button class="btn btn-primary btn-block btn-glow mb-2" id="btn-submit-signup">Register &amp; Unlock Max Plan</button>
+      </div>
+
+      <!-- Mobile OTP Tab -->
+      <div id="auth-panel-mobile" class="auth-panel" style="display:none;">
+        <div id="auth-step-mobile" class="auth-step active">
+          <div class="form-group mb-3">
+            <label for="login-mobile-input">Mobile Number</label>
+            <div class="input-with-prefix" style="display:flex;align-items:center;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);border-radius:8px;overflow:hidden;">
+              <span class="input-prefix" style="padding:10px 12px;background:rgba(255,255,255,0.05);color:var(--text-muted);font-weight:600;">+91</span>
+              <input type="tel" id="login-mobile-input" maxlength="10" placeholder="10-digit mobile number" style="flex:1;background:transparent;border:none;color:white;padding:10px 12px;outline:none;" />
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block btn-glow" id="btn-send-otp">Request OTP</button>
+        </div>
+
+        <div id="auth-step-otp" class="auth-step" style="display:none;">
+          <div class="otp-notice mb-2">
+            <span>OTP sent to: <strong id="otp-phone-display">+91 </strong></span>
+          </div>
+          <div class="form-group mb-3">
+            <label for="login-otp-input">Enter OTP Code</label>
+            <input type="text" id="login-otp-input" class="otp-input font-mono" maxlength="6" placeholder="Enter 6-digit code" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;font-size:18px;letter-spacing:4px;text-align:center;" />
+          </div>
+          <button class="btn btn-primary btn-block btn-glow" id="btn-verify-otp">Verify &amp; Enter Terminal</button>
+          <div class="resend-box mt-2 text-center">
+            <button class="btn-link" id="btn-change-number" style="background:none;border:none;color:var(--brand-light);cursor:pointer;font-size:12px;">Change Number</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer text-center mt-3 pt-2" style="border-top:1px solid var(--border-subtle);font-size:11px;color:var(--text-muted);">
+        <span>👑 Tier: <strong>Max Plan (Lifetime Access)</strong> with Lemonn High-Speed Gateway</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 4. SPECIAL SETTINGS: PAPER MONEY & AUTONOMOUS ENGINE    -->
+  <!-- ======================================================== -->
+  <div class="modal-backdrop" id="paper-capital-modal" aria-hidden="true">
+    <div class="modal-card glass-card" style="max-width:540px;">
+      <button class="modal-close" id="modal-close-paper-btn">&times;</button>
+      
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">💰</span>
+          <div>
+            <h3 style="font-size:18px;font-weight:700;">Paper Capital &amp; Auto-Trading Engine</h3>
+            <p style="font-size:12px;color:var(--text-muted);">Inject test funds and configure realistic real-money execution behavior.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Portfolio Standing -->
+      <div style="background:rgba(18,18,21,0.8);border:1px solid var(--border-subtle);border-radius:10px;padding:14px;margin:16px 0;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <span class="text-muted" style="font-size:11px;">Current Total Net Worth:</span>
+          <div class="font-mono text-profit" id="paper-modal-networth" style="font-size:18px;font-weight:700;">₹10,00,000.00</div>
+        </div>
+        <div>
+          <span class="text-muted" style="font-size:11px;">Available Free Margin:</span>
+          <div class="font-mono text-brand" id="paper-modal-available" style="font-size:18px;font-weight:700;">₹10,00,000.00</div>
+        </div>
+      </div>
+
+      <!-- Inject Paper Money Section -->
+      <div style="margin-bottom:20px;">
+        <label style="font-size:13px;font-weight:600;margin-bottom:8px;display:block;">Select Amount to Add (₹):</label>
+        
+        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-bottom:12px;">
+          <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="50000">+ ₹50,000</button>
+          <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="100000">+ ₹1,00,000</button>
+          <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="500000">+ ₹5,00,000</button>
+          <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="1000000">+ ₹10,00,000</button>
+          <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="5000000">+ ₹50,00,000</button>
+          <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="10000000">+ ₹1 Crore</button>
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:12px;color:var(--text-muted);">Or Enter Custom Deposit Amount (₹):</label>
+          <input type="number" id="custom-paper-deposit-input" placeholder="e.g. 250000" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;font-family:'JetBrains Mono';" />
+        </div>
+      </div>
+
+      <!-- Realistic Trading Rules (Actual Money Simulation) -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:10px;padding:14px;margin-bottom:20px;">
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+          <span>⚙️</span> Real-Market Execution Simulation Rules
+        </h4>
+
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;">
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+            <span>Autonomous Auto-Trading Engine (Active 24/7)</span>
+            <input type="checkbox" id="paper-cfg-autotrade" checked style="width:16px;height:16px;accent-color:var(--brand);" />
+          </label>
+          
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+            <span>Simulate Real Market Slippage (0.05% Spread)</span>
+            <input type="checkbox" id="paper-cfg-slippage" checked style="width:16px;height:16px;accent-color:var(--brand);" />
+          </label>
+
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+            <span>Deduct Exchange STT &amp; Brokerage (0.03% Turnover)</span>
+            <input type="checkbox" id="paper-cfg-brokerage" checked style="width:16px;height:16px;accent-color:var(--brand);" />
+          </label>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span>Max Daily Loss Circuit Breaker:</span>
+            <span class="font-mono text-loss font-bold">-5.0% of Capital</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline btn-sm" id="btn-reset-baseline-capital" style="flex:1;">↺ Reset to ₹10L Baseline</button>
+        <button class="btn btn-primary btn-sm btn-glow" id="btn-apply-paper-deposit" style="flex:1;">💰 Deposit Funds &amp; Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 5. SUPABASE DATABASE CONFIGURATION MODAL                 -->
+  <!-- ======================================================== -->
+  <div class="modal-backdrop" id="supabase-modal" aria-hidden="true">
+    <div class="modal-card glass-card" style="max-width:500px;">
+      <button class="modal-close" id="modal-close-supabase-btn">&times;</button>
+      
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">🗄️</span>
+          <div>
+            <h3 style="font-size:18px;font-weight:700;">Supabase Database Connection</h3>
+            <p style="font-size:12px;color:var(--text-muted);">Connect your Supabase instance to permanently record trades &amp; reports.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(18,18,21,0.8);border-radius:8px;margin:16px 0;border:1px solid var(--border-subtle);">
+        <span class="pill-dot" id="supabase-status-dot" style="background:#ef4444;"></span>
+        <span style="font-size:13px;" id="supabase-status-text">Disconnected (Using Local Offline Storage)</span>
+      </div>
+
+      <div class="form-group mb-3">
+        <label style="font-size:12px;">Supabase Project URL</label>
+        <input type="text" id="cfg-supabase-url" placeholder="https://your-project.supabase.co" style="width:100%;padding:10px 12px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;font-family:'JetBrains Mono';font-size:12px;" />
+      </div>
+
+      <div class="form-group mb-3">
+        <label style="font-size:12px;">Supabase Anon / Public Key</label>
+        <input type="password" id="cfg-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." style="width:100%;padding:10px 12px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;font-family:'JetBrains Mono';font-size:12px;" />
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button class="btn btn-outline btn-sm" id="btn-clear-supabase" style="flex:1;">Clear Config</button>
+        <button class="btn btn-primary btn-sm btn-glow" id="btn-save-supabase" style="flex:1;">Connect &amp; Sync DB</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Main JavaScript Engine -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
