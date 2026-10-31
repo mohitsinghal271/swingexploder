@@ -695,11 +695,17 @@
           </div>
 
           <div class="topbar-right">
+            <!-- Mode Switcher: Paper Trading vs Real Trading -->
+            <div class="trading-mode-selector" id="trading-mode-selector" title="Switch between Paper Trading (Virtual) and Real Broker Trading">
+              <button class="mode-toggle-btn active mode-paper" id="btn-mode-paper">🧪 Paper Mode</button>
+              <button class="mode-toggle-btn mode-real" id="btn-mode-real">⚡ Real Trading</button>
+            </div>
+
             <div class="broker-status-pill" id="header-broker-pill">
               <span class="pill-dot green"></span>
-              <span>Lemonn: <strong>LEM-MAX-ALGO</strong> (14ms)</span>
+              <span id="header-broker-text">Lemonn: <strong>LEM-MOHIT-MAX</strong> (14ms)</span>
             </div>
-            <button class="btn btn-xs btn-primary btn-glow" id="btn-open-paper-settings">💰 Paper Capital (+Add)</button>
+            <button class="btn btn-xs btn-primary btn-glow" id="btn-open-paper-settings">💰 Virtual Funds (+Add)</button>
             <button class="btn btn-xs btn-outline" id="btn-open-supabase-modal">🗄️ Supabase DB</button>
             <button class="btn btn-xs btn-primary" id="btn-quick-trade-sim">+ Place Order</button>
             <button class="btn btn-xs btn-outline" id="btn-portal-logout">Logout</button>
@@ -750,7 +756,7 @@
       <div id="auth-panel-signup" class="auth-panel" style="display:none;">
         <div class="form-group mb-3">
           <label>Full Name</label>
-          <input type="text" id="signup-name" placeholder="Arjun Mehta" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;" />
+          <input type="text" id="signup-name" placeholder="Mohit Singha" style="width:100%;padding:10px 14px;background:rgba(18,18,21,0.8);border:1px solid var(--border-default);color:white;border-radius:8px;" />
         </div>
         <div class="form-group mb-3">
           <label>Email Address</label>
@@ -831,12 +837,12 @@
         <label style="font-size:13px;font-weight:600;margin-bottom:8px;display:block;">Select Amount to Add (₹):</label>
         
         <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-bottom:12px;">
+          <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="10000">+ ₹10,000</button>
           <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="50000">+ ₹50,000</button>
           <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="100000">+ ₹1,00,000</button>
           <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="500000">+ ₹5,00,000</button>
           <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="1000000">+ ₹10,00,000</button>
           <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="5000000">+ ₹50,00,000</button>
-          <button class="btn btn-xs btn-outline paper-chip-btn" data-amt="10000000">+ ₹1 Crore</button>
         </div>
 
         <div class="form-group">

@@ -1,23 +1,23 @@
 // Mock market, strategies, and ₹1,00,000 Paper Trading Engine Data
 
 export const TEST_CREDENTIALS = {
-  mobile: "9876543210",
+  mobile: "8962774024",
   otp: "123456",
   user: {
-    name: "Arjun Mehta (Demo)",
-    email: "test.trader@swingexploder.dev",
-    role: "Paper Trading Desk",
-    plan: "Elite Algo Pass",
-    planExpiry: "2027-12-31",
+    name: "Mohit Singha",
+    email: "mohitsingha271l@gmail.com",
+    role: "Master Algo Trader",
+    plan: "Max Plan (Lifetime Access)",
+    planExpiry: "2035-12-31",
     broker: {
-      name: "Lemonn Paper Trading Bridge",
-      clientCode: "TEST-100K-ALGO",
-      status: "Connected (Paper Mode)",
-      pingMs: 18,
-      accountBalance: 100000.00,
-      initialCapital: 100000.00,
+      name: "Lemonn Broker Bridge",
+      clientCode: "LEM-MOHIT-MAX",
+      status: "Connected (Live Stream)",
+      pingMs: 14,
+      accountBalance: 1000000.00,
+      initialCapital: 1000000.00,
       utilizedMargin: 0.00,
-      availableMargin: 100000.00
+      availableMargin: 1000000.00
     }
   }
 };

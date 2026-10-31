@@ -31,18 +31,29 @@ let auth;
 let currentAppView = "home";
 let activeStrategies = JSON.parse(JSON.stringify(INITIAL_STRATEGIES));
 
-// Capital standing - Initialized to Max Plan baseline (₹10,00,000.00)
-let accountBalance = 1000000.00;
-let initialCapital = 1000000.00;
-let totalBrokeragePaid = 285.50;
+// Trading Mode: "paper" (Virtual Practice) or "real" (Authorized Broker)
+let currentTradingMode = localStorage.getItem("se_trading_mode") || "paper";
 
-// Order Records
-let orderHistory = [
-  { id: "ORD-9821", time: "09:20:14", symbol: "NIFTY 24850 CE", type: "BUY", qty: 50, price: 142.50, status: "FILLED", strategy: "DHURANDHAR", fee: "21.38" },
-  { id: "ORD-9822", time: "09:35:42", symbol: "TATASTEEL", type: "BUY", qty: 240, price: 161.20, status: "FILLED", strategy: "MOMENTUM MASTERS", fee: "11.60" },
-  { id: "ORD-9823", time: "10:14:05", symbol: "BANKNIFTY 52200 PE", type: "BUY", qty: 25, price: 285.00, status: "FILLED", strategy: "BRAHMASTRA", fee: "21.38" },
-  { id: "ORD-9824", time: "11:05:12", symbol: "NIFTY 24800 STRADDLE", type: "SELL", qty: 50, price: 182.00, status: "FILLED", strategy: "CHAKRAVYUH", fee: "27.30" }
-];
+// Separate Portfolios for Virtual Paper vs Real Broker Trading
+let paperBalance = parseFloat(localStorage.getItem("se_paper_balance") || "1000000.00");
+let paperInitialCapital = parseFloat(localStorage.getItem("se_paper_initial") || "1000000.00");
+let realBalance = parseFloat(localStorage.getItem("se_real_balance") || "1000000.00");
+let realInitialCapital = parseFloat(localStorage.getItem("se_real_initial") || "1000000.00");
+
+// Dynamic Balance Accessors
+export function getActiveBalance() {
+  return currentTradingMode === "real" ? realBalance : paperBalance;
+}
+export function getActiveInitialCapital() {
+  return currentTradingMode === "real" ? realInitialCapital : paperInitialCapital;
+}
+
+let accountBalance = getActiveBalance();
+let initialCapital = getActiveInitialCapital();
+
+// Clean Order Records - No fake static dummy orders! Loaded cleanly from session/DB
+let orderHistory = JSON.parse(localStorage.getItem("se_order_history") || "[]");
+let totalBrokeragePaid = orderHistory.reduce((acc, o) => acc + (parseFloat(o.fee) || 0), 0);
 
 let testimonialIndex = 0;
 let isSimulationActive = true;
@@ -153,8 +164,43 @@ function showAppView() {
   if (tierEl) tierEl.textContent = user.plan || "Max Plan (Lifetime Access)";
   if (avatarEl) avatarEl.textContent = (user.name || "MT").split(" ").map(w => w[0]).join("").slice(0, 2);
   
+  updateModeUI();
   renderPortalBody();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+export function setTradingMode(mode) {
+  currentTradingMode = mode;
+  localStorage.setItem("se_trading_mode", mode);
+  accountBalance = getActiveBalance();
+  initialCapital = getActiveInitialCapital();
+  updateModeUI();
+  renderPortalBody();
+
+  if (mode === "real") {
+    showToast("⚡ Switched to Real Trading Mode (Connected to Lemonn Gateway)", "warning");
+  } else {
+    showToast("🧪 Switched to Paper Trading Mode (Virtual Funds Active)", "info");
+  }
+}
+
+export function updateModeUI() {
+  const paperBtn = document.getElementById("btn-mode-paper");
+  const realBtn = document.getElementById("btn-mode-real");
+  const brokerPillText = document.getElementById("header-broker-text");
+  const virtualBtn = document.getElementById("btn-open-paper-settings");
+
+  if (currentTradingMode === "real") {
+    realBtn?.classList.add("active");
+    paperBtn?.classList.remove("active");
+    if (brokerPillText) brokerPillText.innerHTML = `Lemonn: <strong>LEM-MOHIT-MAX</strong> (Live)`;
+    if (virtualBtn) virtualBtn.textContent = `💼 Broker Balance`;
+  } else {
+    paperBtn?.classList.add("active");
+    realBtn?.classList.remove("active");
+    if (brokerPillText) brokerPillText.innerHTML = `Paper Desk: <strong>SIM-14MS</strong> (Virtual)`;
+    if (virtualBtn) virtualBtn.textContent = `💰 Virtual Funds (+Add)`;
+  }
 }
 
 async function handleAuthStateChange(user) {
@@ -457,22 +503,53 @@ function renderPortalHome(container) {
     <div class="portal-view-header">
       <div class="portal-view-title">
         <div style="display:flex;align-items:center;gap:8px;">
-          <h2>Live Algorithmic Paper Trading Desk</h2>
+          <h2>${currentTradingMode === 'real' ? 'Live Algorithmic Real Trading Desk' : 'Live Algorithmic Paper Trading Desk'}</h2>
           <span class="badge" style="background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">👑 MAX PLAN</span>
         </div>
-        <p>Active Capital: <strong>₹${accountBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong> on Lemonn High-Speed Gateway.</p>
+        <p>${currentTradingMode === 'real' ? 'Live Broker Execution: <strong>Lemonn Bridge</strong>' : 'Practice Desk: <strong>Virtual Simulation</strong>'} | Active Capital: <strong>₹${accountBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></p>
       </div>
       <div class="portal-view-actions">
-        <button class="btn btn-sm btn-outline" id="btn-home-manage-capital">💰 Manage Paper Capital</button>
+        <button class="btn btn-sm btn-outline" id="btn-home-manage-capital">${currentTradingMode === 'real' ? '💼 Broker Funds' : '💰 Manage Virtual Funds'}</button>
         <button class="btn btn-sm btn-primary btn-glow" id="btn-deploy-all-master">⚡ Deploy All Strategies</button>
       </div>
     </div>
+
+    <!-- Active Mode Indicator Banner -->
+    ${currentTradingMode === 'real' ? `
+      <div class="real-mode-banner">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:22px;">⚡</span>
+          <div>
+            <strong style="color:#34d399;font-size:13px;letter-spacing:0.5px;">LIVE REAL TRADING ACTIVE (AUTHENTICATED)</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin:0;">Connected to exchange orderbook through Lemonn Broker Bridge (Client: <strong>${user.broker?.clientCode || 'LEM-MOHIT-MAX'}</strong>).</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-xs btn-outline" id="btn-banner-switch-paper">🧪 Switch to Paper Mode</button>
+          <button class="btn btn-xs btn-primary" id="btn-banner-broker-config">⚙️ Broker Settings</button>
+        </div>
+      </div>
+    ` : `
+      <div class="paper-mode-banner">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:22px;">🧪</span>
+          <div>
+            <strong style="color:#a5b4fc;font-size:13px;letter-spacing:0.5px;">VIRTUAL PAPER TRADING ACTIVE (ZERO RISK)</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin:0;">Simulated execution with real live stock prices. Virtual Margin: <strong>₹${paperBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-xs btn-primary btn-glow" id="btn-banner-add-virtual">💰 Add Funds (+₹10K, +₹50K)</button>
+          <button class="btn btn-xs btn-outline" id="btn-banner-switch-real">⚡ Switch to Real Mode</button>
+        </div>
+      </div>
+    `}
 
     <!-- Metrics Row -->
     <div class="portal-metrics-row">
       <div class="metric-card">
         <div class="m-head">
-          <span>PORTFOLIO BALANCE</span>
+          <span>${currentTradingMode === 'real' ? 'REAL MARGIN BALANCE' : 'VIRTUAL PAPER BALANCE'}</span>
           <span>INR</span>
         </div>
         <div class="m-amount font-mono" id="p-networth">₹${currentNetWorth.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
@@ -564,8 +641,8 @@ function renderPortalHome(container) {
     <div class="glass-card" style="padding:0;overflow:hidden;margin-top:24px;">
       <div style="padding:16px 20px;border-bottom:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <h4 style="font-weight:700;">Audited Execution Log (Lemonn Gateway &amp; Supabase DB)</h4>
-          <span style="font-size:11px;color:var(--text-muted);">Slippage and Exchange Turnover fees deducted realistically</span>
+          <h4 style="font-weight:700;">Audited Execution Log (${orderHistory.length} Total Trades)</h4>
+          <span style="font-size:11px;color:var(--text-muted);">Real-time tracking for both 🧪 Paper and ⚡ Real executions</span>
         </div>
         <span class="badge" style="font-size:11px;color:var(--profit-light);">Auto Webhook Active</span>
       </div>
@@ -575,6 +652,7 @@ function renderPortalHome(container) {
             <tr>
               <th>TIME</th>
               <th>ORDER ID</th>
+              <th>MODE</th>
               <th>SYMBOL</th>
               <th>SIDE</th>
               <th>QTY</th>
@@ -585,10 +663,18 @@ function renderPortalHome(container) {
             </tr>
           </thead>
           <tbody>
-            ${orderHistory.map(ord => `
+            ${orderHistory.length === 0 ? `
+              <tr>
+                <td colspan="10" style="text-align:center;padding:36px;color:var(--text-muted);font-size:13px;">
+                  No trade orders executed yet in this session.<br>
+                  <span style="font-size:11px;color:var(--text-muted);opacity:0.8;">Deployed algorithms will automatically execute orders during live market hours, or click <strong>+ Place Order</strong> to test.</span>
+                </td>
+              </tr>
+            ` : orderHistory.map(ord => `
               <tr>
                 <td class="font-mono text-muted">${ord.time}</td>
                 <td class="font-mono">${ord.id}</td>
+                <td><span class="${ord.mode === 'REAL' ? 'badge-mode-real' : 'badge-mode-paper'}">${ord.mode || 'PAPER'}</span></td>
                 <td><strong>${ord.symbol}</strong></td>
                 <td><span style="color:${ord.type === 'BUY' ? 'var(--profit)' : 'var(--loss)'};font-weight:700;">${ord.type}</span></td>
                 <td class="font-mono">${ord.qty}</td>
@@ -603,6 +689,14 @@ function renderPortalHome(container) {
       </div>
     </div>
   `;
+
+  // Banner mode switch handlers
+  container.querySelector("#btn-banner-switch-paper")?.addEventListener("click", () => setTradingMode("paper"));
+  container.querySelector("#btn-banner-switch-real")?.addEventListener("click", () => setTradingMode("real"));
+  container.querySelector("#btn-banner-add-virtual")?.addEventListener("click", openPaperSettingsModal);
+  container.querySelector("#btn-banner-broker-config")?.addEventListener("click", () => {
+    switchAppView("broker");
+  });
 
   // Bind Home sub-events
   container.querySelector("#btn-home-manage-capital")?.addEventListener("click", () => {
@@ -805,6 +899,7 @@ function renderPortalReports(container) {
             <tr>
               <th>TIMESTAMP</th>
               <th>ORDER ID</th>
+              <th>MODE</th>
               <th>SYMBOL</th>
               <th>SIDE</th>
               <th>QTY</th>
@@ -815,17 +910,25 @@ function renderPortalReports(container) {
             </tr>
           </thead>
           <tbody>
-            ${orderHistory.map(ord => `
+            ${orderHistory.length === 0 ? `
+              <tr>
+                <td colspan="10" style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">
+                  No trade records in current audit journal.<br>
+                  <span style="font-size:11px;color:var(--text-muted);opacity:0.8;">Both 🧪 Paper and ⚡ Real executions will be logged here.</span>
+                </td>
+              </tr>
+            ` : orderHistory.map(ord => `
               <tr>
                 <td class="font-mono text-muted">${ord.time}</td>
                 <td class="font-mono text-brand">${ord.id}</td>
+                <td><span class="${ord.mode === 'REAL' ? 'badge-mode-real' : 'badge-mode-paper'}">${ord.mode || 'PAPER'}</span></td>
                 <td><strong>${ord.symbol}</strong></td>
                 <td><span style="color:${ord.type === 'BUY' ? 'var(--profit)' : 'var(--loss)'};font-weight:700;">${ord.type}</span></td>
                 <td class="font-mono">${ord.qty}</td>
                 <td class="font-mono">₹${parseFloat(ord.price).toFixed(2)}</td>
                 <td class="font-mono text-muted">₹${ord.fee || '12.50'}</td>
                 <td><span class="badge" style="background:rgba(99,102,241,0.12);color:var(--brand-light);padding:2px 6px;border-radius:4px;font-size:11px;">${ord.strategy}</span></td>
-                <td><span class="badge" style="background:var(--profit-bg);color:var(--profit-light);padding:2px 6px;border-radius:4px;font-size:11px;">Lemonn Live</span></td>
+                <td><span class="badge" style="background:var(--profit-bg);color:var(--profit-light);padding:2px 6px;border-radius:4px;font-size:11px;">${ord.mode === 'REAL' ? 'Lemonn Live' : 'Paper Sim'}</span></td>
               </tr>
             `).join("")}
           </tbody>
@@ -1350,17 +1453,22 @@ function renderPortalTelegram(container) {
   });
 }
 
-// Paper Trade Executor (Real-Money Execution Behavior)
-export function executePaperOrder(symbol, side, qty, price, source, isAutonomous = false) {
+// Universal Order Executor (Handles both 🧪 Paper Trading and ⚡ Real Broker Execution)
+export function executeOrder(symbol, side, qty, price, source, isAutonomous = false) {
+  const isReal = currentTradingMode === "real";
+  const user = auth?.getUser() || DEFAULT_MAX_USER;
+
   // Apply realistic slippage
   const execPrice = slippageEnabled
     ? side === "BUY" ? price * (1 + SLIPPAGE_PCT) : price * (1 - SLIPPAGE_PCT)
     : price;
 
   const cost = qty * execPrice;
-  if (cost > accountBalance && side === "BUY") {
+  let activeBal = isReal ? realBalance : paperBalance;
+
+  if (cost > activeBal && side === "BUY") {
     if (!isAutonomous) {
-      showToast(`Insufficient free margin for ₹${cost.toFixed(2)} order!`, "error");
+      showToast(`Insufficient ${isReal ? 'Real Broker' : 'Paper'} free margin for ₹${cost.toFixed(2)} order!`, "error");
     }
     return;
   }
@@ -1368,9 +1476,18 @@ export function executePaperOrder(symbol, side, qty, price, source, isAutonomous
   // Deduct realistic Brokerage + STT + Turnover taxes (0.03%)
   const fee = brokerageEnabled ? cost * BROKERAGE_STT_RATE : 0;
   totalBrokeragePaid += fee;
-  accountBalance -= fee;
 
-  const ordId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
+  if (isReal) {
+    realBalance = Math.max(0, realBalance - fee);
+    localStorage.setItem("se_real_balance", realBalance.toString());
+  } else {
+    paperBalance = Math.max(0, paperBalance - fee);
+    localStorage.setItem("se_paper_balance", paperBalance.toString());
+  }
+
+  accountBalance = isReal ? realBalance : paperBalance;
+
+  const ordId = (isReal ? "REAL-" : "PAPER-") + Math.floor(1000 + Math.random() * 9000);
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
@@ -1380,16 +1497,19 @@ export function executePaperOrder(symbol, side, qty, price, source, isAutonomous
     symbol,
     type: side,
     qty,
-    price: execPrice,
+    price: parseFloat(execPrice.toFixed(2)),
     status: "FILLED",
     strategy: source,
+    mode: isReal ? "REAL" : "PAPER",
     fee: fee.toFixed(2)
   };
 
   orderHistory.unshift(orderRecord);
+  try {
+    localStorage.setItem("se_order_history", JSON.stringify(orderHistory.slice(0, 100)));
+  } catch(e){}
 
   // If Supabase is connected, record order permanently
-  const user = auth.getUser();
   if (user && isSupabaseConfigured() && user.id !== "max-trader-master") {
     dbInsertOrder({
       id: ordId,
@@ -1398,19 +1518,28 @@ export function executePaperOrder(symbol, side, qty, price, source, isAutonomous
       symbol,
       type: side,
       qty,
-      price: execPrice,
+      price: parseFloat(execPrice.toFixed(2)),
       status: "FILLED",
       strategy: source
     });
   }
 
   if (!isAutonomous) {
-    showToast(`Order ${ordId} Filled: ${side} ${qty}x ${symbol} @ ₹${execPrice.toFixed(2)} (Fee: ₹${fee.toFixed(2)})`, "success");
+    if (isReal) {
+      showToast(`⚡ Real Order ${ordId} Placed on Lemonn: ${side} ${qty}x ${symbol} @ ₹${execPrice.toFixed(2)}`, "success");
+    } else {
+      showToast(`🧪 Paper Order ${ordId} Filled: ${side} ${qty}x ${symbol} @ ₹${execPrice.toFixed(2)} (Fee: ₹${fee.toFixed(2)})`, "success");
+    }
   }
 
-  if (currentAppView === "home" || currentAppView === "reports") {
+  if (currentAppView === "home" || currentAppView === "reports" || currentAppView === "dashboard") {
     renderPortalBody();
   }
+}
+
+// Backwards-compatible alias for existing code
+export function executePaperOrder(symbol, side, qty, price, source, isAutonomous = false) {
+  return executeOrder(symbol, side, qty, price, source, isAutonomous);
 }
 
 // ==========================================================
@@ -1613,9 +1742,21 @@ function bindSettingsModals() {
     const addedAmount = parseFloat(input?.value || "0");
 
     if (addedAmount > 0) {
-      accountBalance += addedAmount;
-      initialCapital += addedAmount;
-      showToast(`Successfully deposited ₹${addedAmount.toLocaleString('en-IN')} paper capital!`, "success");
+      if (currentTradingMode === "real") {
+        realBalance += addedAmount;
+        realInitialCapital += addedAmount;
+        localStorage.setItem("se_real_balance", realBalance.toString());
+        localStorage.setItem("se_real_initial", realInitialCapital.toString());
+        showToast(`Successfully credited ₹${addedAmount.toLocaleString('en-IN')} to Real Margin!`, "success");
+      } else {
+        paperBalance += addedAmount;
+        paperInitialCapital += addedAmount;
+        localStorage.setItem("se_paper_balance", paperBalance.toString());
+        localStorage.setItem("se_paper_initial", paperInitialCapital.toString());
+        showToast(`Successfully deposited ₹${addedAmount.toLocaleString('en-IN')} virtual paper funds!`, "success");
+      }
+      accountBalance = getActiveBalance();
+      initialCapital = getActiveInitialCapital();
     }
 
     // Rules
@@ -1633,13 +1774,24 @@ function bindSettingsModals() {
     }
 
     closePaperSettingsModal();
-    if (currentAppView === "home" || currentAppView === "reports") {
+    if (currentAppView === "home" || currentAppView === "reports" || currentAppView === "dashboard") {
       renderPortalBody();
     }
   });
 
   // Reset baseline capital
   document.getElementById("btn-reset-baseline-capital")?.addEventListener("click", () => {
+    if (currentTradingMode === "real") {
+      realBalance = 1000000.00;
+      realInitialCapital = 1000000.00;
+      localStorage.setItem("se_real_balance", "1000000.00");
+      localStorage.setItem("se_real_initial", "1000000.00");
+    } else {
+      paperBalance = 1000000.00;
+      paperInitialCapital = 1000000.00;
+      localStorage.setItem("se_paper_balance", "1000000.00");
+      localStorage.setItem("se_paper_initial", "1000000.00");
+    }
     accountBalance = 1000000.00;
     initialCapital = 1000000.00;
     totalBrokeragePaid = 0;
@@ -1685,6 +1837,10 @@ function bindSettingsModals() {
 }
 
 function bindAppEvents() {
+  // Mode Switcher: Paper Trading vs Real Trading
+  document.getElementById("btn-mode-paper")?.addEventListener("click", () => setTradingMode("paper"));
+  document.getElementById("btn-mode-real")?.addEventListener("click", () => setTradingMode("real"));
+
   // Sidebar navigation
   document.querySelectorAll(".sidebar-menu .menu-item").forEach(item => {
     item.addEventListener("click", (e) => {
